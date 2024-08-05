@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 @section('title')
-    Categories Detail
+    Chi tiết danh mục
 @endsection
 @section('content')
-    <a class="btn btn-primary" href="{{route('categories.index')}}">Back</a>
+    <a class="btn btn-primary" href="{{route('categories.index')}}">Quay lại</a>
     <table class="table table-hover text-center mt-3">
         <thead>
         <tr>
-            <th scope="col">Key</th>
-            <th scope="col">Value</th>
+            <th scope="col">Từ khoá</th>
+            <th scope="col">Nội dung</th>
         </tr>
         </thead>
         <tbody>

@@ -1,20 +1,30 @@
 @extends('layouts.admin')
 
 @section('title')
-    Add Category
+    Thêm Danh Mục
 @endsection
 
 @section('content')
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form action="{{ route('categories.store') }}" method="POST">
         @csrf
-
         <div class="mt-2 mb-2">
-            <label class="form-label" for="name">Name</label>
+            <label class="form-label" for="name">Tên</label>
             <input type="text" id="name" name="name" class="form-control">
         </div>
 
-        <button type="submit" class="btn btn-success">Save</button>
+        <button type="submit" class="btn btn-success">Lưu</button>
 
-        <a href="{{ route('categories.index') }}" class="btn btn-danger">Back</a>
+        <a href="{{ route('categories.index') }}" class="btn btn-danger">Quay Lại</a>
     </form>
 @endsection

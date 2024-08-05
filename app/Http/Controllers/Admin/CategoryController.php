@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,6 @@ class CategoryController extends Controller
     {
         $data = Category::query()->latest('id')->paginate(5);
         return view('admin.categories.index', compact('data'));
-
     }
 
     public function create()
@@ -20,10 +20,10 @@ class CategoryController extends Controller
         return view('admin.categories.create');
     }
 
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        Category::query()->create($request->all());
-        return redirect()->route('categories.index');
+        Category::query()->create($request->validated());
+        return redirect()->route('categories.index')->with('success', 'Danh mục đã được tạo thành công.');
     }
 
     public function show(Category $category)
@@ -36,16 +36,29 @@ class CategoryController extends Controller
         return view('admin.categories.edit', compact('category'));
     }
 
-    public function update(Request $request, Category $category)
+    public function update(CategoryRequest $request, Category $category)
     {
-        $category = Category::query()->findOrFail($category->id);
-        $category->update($request->all());
-        return redirect()->route('admin.categories.index');
+        $category->update($request->validated());
+        return redirect()->route('categories.index')->with('success', 'Danh mục đã được cập nhật thành công.');
     }
 
     public function destroy(Category $category)
     {
-        Category::query()->where('id', $category->id)->delete();
-        return redirect()->route('categories.index');
+        $category->delete();
+        return redirect()->route('categories.index')->with('success', 'Danh mục đã được xóa thành công.');
     }
+
+    public function trash(Request $request)
+    {
+        $data = Category::onlyTrashed()->paginate();
+        return view('admin.categories.trash',compact('data'));
+    }
+
+    public function restore($id)
+    {
+        $category = Category::withTrashed()->find($id);
+        $category->restore();
+        return redirect()->route('categories.trash')->with('success', 'Danh mục đã được khôi phục.');
+    }
+
 }

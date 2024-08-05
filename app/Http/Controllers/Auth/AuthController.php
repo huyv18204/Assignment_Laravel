@@ -3,61 +3,79 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function showFormRegister()
-    {
-        return view('auth.register');
-    }
-
-    public function showFormLogin()
-    {
-        return view('auth.login');
-    }
-
-    public function register(RegisterRequest $request)
-    {
-
-        $user = User::query()->create($request->all());
-
-        Auth::login($user);
-
-        return redirect()->route('dashboard');
-    }
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+        // Validate request
+        $request->validate([
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:6',
+        ], [
+            'email.required' => 'Email là bắt buộc.',
+            'email.email' => 'Định dạng email không hợp lệ.',
+            'email.max' => 'Email không được vượt quá 255 ký tự.',
+            'password.required' => 'Mật khẩu là bắt buộc.',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+        $credentials = $request->only('email', 'password');
 
-            return redirect()->route('dashboard');
+        if (Auth::attempt($credentials)) {
+            return redirect()->route('home.page');
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
-
-
+            'email' => 'Thông tin đăng nhập không chính xác.',
+        ]);
     }
 
-    public function logout(Request $request)
+
+    public function register(Request $request)
+    {
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|confirmed|min:6',
+        ], [
+            'name.required' => 'Tên là bắt buộc.',
+            'name.string' => 'Tên phải là một chuỗi ký tự.',
+            'name.max' => 'Tên không được vượt quá 255 ký tự.',
+            'email.required' => 'Email là bắt buộc.',
+            'email.email' => 'Định dạng email không hợp lệ.',
+            'email.max' => 'Email không được vượt quá 255 ký tự.',
+            'email.unique' => 'Email này đã được sử dụng.',
+            'password.required' => 'Mật khẩu là bắt buộc.',
+            'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
+        ]);
+
+        try {
+            $user = User::query()->create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            Auth::login($user);
+
+            return redirect()->route('home.page');
+        } catch (\Exception $e) {
+            \Log::error('Failed to create user:', ['error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'Đã xảy ra lỗi trong quá trình tạo người dùng.']);
+        }
+    }
+
+    public function logout()
     {
         Auth::logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return redirect('/');
+        return redirect()->route('home.page');
     }
 }

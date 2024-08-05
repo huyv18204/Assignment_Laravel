@@ -5,19 +5,25 @@
         </a>
         <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
             <li class="nav-item">
-                <a href="{{route('homePage')}}" class="nav-link align-middle px-0">
-                    <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Home</span>
+                <a href="{{route('home.page')}}" class="nav-link align-middle px-0">
+                    <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Trang web</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{route('posts.index')}}" class="nav-link align-middle px-0">
                     <i class="fs-4 bi-house"></i> <span
-                        class="ms-1 d-none d-sm-inline">Posts Management</span>
+                        class="ms-1 d-none d-sm-inline">Quản lí bài viết</span>
                 </a>
             </li>
             <li>
                 <a href="{{route('categories.index')}}" class="nav-link px-0 align-middle">
-                    <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Categories Management</span>
+                    <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Quản lí danh mục</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{route('users.index')}}" class="nav-link px-0 align-middle">
+                    <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Quản lí người dùng</span>
                 </a>
             </li>
         </ul>

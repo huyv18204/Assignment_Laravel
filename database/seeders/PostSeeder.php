@@ -16,29 +16,28 @@ class PostSeeder extends Seeder
     {
         \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
         DB::table('posts')->truncate();
-        DB::table('categories')->truncate();
+        DB::table('users')->truncate();
 
 
         for ($i = 0; $i < 10; $i++) {
-            DB::table('categories')->insert([
-                'name' => fake()->realText(50)
+            DB::table('users')->insert([
+                'name' => fake()->name()
             ]);
         }
 
-        $data = [];
-        for ($i = 1; $i < 1001; $i++) {
-            $data[] = [
+        for ($i = 1; $i < 20; $i++) {
+            $data = [
                 'category_id' => rand(1, 10),
                 'title' => fake()->text('50'),
-                'image' => fake()->imageUrl(100,100),
+                'image' => fake()->imageUrl(100, 100),
                 'description' => fake()->text('50'),
                 'content' => fake()->text(),
+                'view' => rand(1, 100),
+                'created_at' =>now(),
+                'updated_at' =>now(),
             ];
+            DB::table('posts')->insert($data);
 
-            if ($i % 500 == 0) {
-                DB::table('posts')->insert($data);
-                $data = [];
-            }
         }
 
 
